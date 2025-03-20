@@ -1,0 +1,20 @@
+name: "Segundo Action"
+run-name: "Ejecutado por ${{ github.actor }}"
+
+on: 
+    push:
+        branches: ["main"]
+    workflow_dispatch:
+jobs:
+    build:
+        runs-on: ubuntu-lastest
+        strategy:
+            matrix: 
+                scripts: ["test1.sh","test2.sh","test3.sh"]
+        steps:
+            - name: Clonar repositorio
+              uses: actions/checkout@v4
+            - name: Dar permisos
+              run: chmod +x scripts/${{ matrix.scripts}}
+            - name: Ejecutar los scripts
+              run: ./scripts/${{ matrix.scripts }}
