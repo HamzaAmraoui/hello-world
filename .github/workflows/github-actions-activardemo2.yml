@@ -1,0 +1,9 @@
+name: "Activar Segundo Action"
+run-name: "Ejecutado por ${{ github.actor }}"
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  call_action2:
+    uses: HamzaAmraoui/hello-world/.github/workflows/github-actions-demo2.yml@main
