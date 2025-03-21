@@ -29,6 +29,6 @@ jobs:
             run: echo "Desplegando en el entorno ${{ github.event.inputs.entornos }}"
           - name: Resultado de datos
             run:  | 
-                'La url es: ${{ secrets.API_URL }}  
+                'La url es: ${{ vars.API_URL }}  
                  La key: ${{ secrets.API_KEY }}'
 
