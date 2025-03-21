@@ -1,0 +1,23 @@
+name: Ejercicio Hacktonv1
+run-name: Ejecutado por ${{ github.actor }}
+
+on: 
+    workflow_dispatch:
+jobs:
+    ejercicio:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clonar Repositorio
+              run: actions/checkout@v4
+            - name: Action InfraConfig
+              uses: ./actions/InfraConfig/
+            - name: Build
+              run: echo "Building"
+            - name: "Desploy"
+              run: echo "Deploying"
+            - name: Action Test
+              uses: ./actions/Test
+              with:
+                  param1: 'Test1' 
+                  param2: 'Test2' 
+            
