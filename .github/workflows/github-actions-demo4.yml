@@ -8,7 +8,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: Clonar Repositorio
-              run: actions/checkout@v4
+              uses: actions/checkout@v4
             - name: Action InfraConfig
               uses: ./actions/InfraConfig/
             - name: Build
