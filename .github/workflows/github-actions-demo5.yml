@@ -15,7 +15,7 @@ jobs:
 
         steps:
         - name: Clonar repositorio
-          run: actions/checkouts@v4
+          run: actions/checkout@v4
         
         - name: Cogemos los ficheros cambiados 
           id: archivos-cambiados
