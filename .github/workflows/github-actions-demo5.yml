@@ -9,7 +9,7 @@ on:
     workflow_dispatch:        
 jobs:
     listfiles:
-        runs-on: ubuntu
+        runs-on: ubuntu-latest
         outputs:
             archivocambiado: ${{steps.lista-archivos.outputs.archivocambiado}}
 
@@ -38,7 +38,7 @@ jobs:
     microservicios:
       needs: listfiles
       if: ${{ needs.listfiles.outputs.archivocambiado != '' }}
-      runs-on: ubuntu
+      runs-on: ubuntu-latest
       steps:
           - uses: actions/checkout@v4
           
