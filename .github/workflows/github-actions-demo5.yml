@@ -29,7 +29,7 @@ jobs:
           env: 
             all_archivos: ${{ steps.archivos-cambiados.outputs.all_changed_files}}
           run: |
-             for files in $(all_archivos);do
+             for files in ${all_archivos};do
                   echo "$file was changed"
              done
              echo "archivocambiado=$(all_archivos)" >> $GITHUB_OUTPUT
