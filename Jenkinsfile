@@ -1,8 +1,8 @@
-@Library("mi-libreria")
+@Library("mi-libreria") _
 
 pipeline{
-    agent any
-    stage {
+    agent any 
+    stages {
         stage("Usar Libreria") {
             steps{
                 saludo("Jenkins")   
