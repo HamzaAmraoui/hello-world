@@ -1,33 +1,13 @@
+@Library("mi-libreria")
+
 pipeline{
     agent any
-    enviroment{
-        Lighthouse_url = crea
-
-    }
     stage {
-        stage {
+        stage("Usar Libreria") {
             steps{
-                
+                saludo("Jenkins")   
             }
 
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
