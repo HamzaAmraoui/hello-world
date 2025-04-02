@@ -24,7 +24,7 @@ jobs:
             files: 'Micros/'
         
         
-        - name: Listar todos los ficheros
+        - name: Listar todos los ficheros 
           id: lista-archivos 
           env: 
             all_archivos: ${{ steps.archivos-cambiados.outputs.all_changed_files}}
