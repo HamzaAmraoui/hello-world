@@ -1,18 +1,22 @@
 pipeline {
-    agent none  // Usamos agentes efímeros
+    agent none  // Usamos agentes efímeros en Kubernetes
 
     stages {
         stage('Build') {
             agent { kubernetes { yaml podYAML() } }
             steps {
-                echo " Building the application..."
+                container('kubectl') {
+                    echo "🔧 Building the application..."
+                }
             }
         }
         
         stage('Test') {
             agent { kubernetes { yaml podYAML() } }
             steps {
-                echo " Running tests..."
+                container('kubectl') {
+                    echo "🧪 Running tests..."
+                }
             }
         }
 
@@ -24,28 +28,32 @@ pipeline {
                 IMAGE_TAG = "latest"
             }
             steps {
-                echo " Building and pushing Docker image..."
-                sh '''
-                    docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
-                    docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-                '''
+                container('docker') {  // Asegura que los comandos Docker se ejecuten en el contenedor correcto
+                    echo "🐳 Building and pushing Docker image..."
+                    sh '''
+                        docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
+                        docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
             }
         }
 
         stage('Deploy to K8s') {
             agent { kubernetes { yaml podYAML() } }
             steps {
-                echo "🚀 Deploying application to Kubernetes..."
-                sh '''
-                    kubectl apply -f https://raw.githubusercontent.com/cloudogu/hello-k8s/main/k8s.yaml
-                    kubectl rollout status deployment/hello-k8s
-                '''
+                container('kubectl') {
+                    echo "🚀 Deploying application to Kubernetes..."
+                    sh '''
+                        kubectl apply -f https://raw.githubusercontent.com/cloudogu/hello-k8s/main/k8s.yaml
+                        kubectl rollout status deployment/hello-k8s
+                    '''
+                }
             }
         }
     }
 }
 
-
+// 🛠️ Definimos la plantilla del pod con los contenedores necesarios
 def podYAML() {
     return """
 apiVersion: v1
@@ -57,12 +65,21 @@ spec:
       command:
         - cat
       tty: true
+
     - name: docker
-      image: docker:20.10-dind  # Imagen con Docker
+      image: docker:24-dind  # Imagen con Docker Daemon
       securityContext:
-        privileged: true  # Necesario para Docker dentro de Kubernetes
+        privileged: true  # Necesario para ejecutar Docker dentro de Kubernetes
       command:
         - "dockerd"
       tty: true
+      volumeMounts:
+        - mountPath: /var/run/docker.sock
+          name: docker-socket
+
+  volumes:
+    - name: docker-socket
+      hostPath:
+        path: /var/run/docker.sock
 """
 }
