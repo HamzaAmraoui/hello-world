@@ -43,7 +43,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: ./build/
+          path: ./hackaton/
 
 
   deploy-dev:
@@ -58,7 +58,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
             name: build-artifact
-            path: ./build/
+            path: ./hackaton/
         
     - name: Desplegando aplicación en DEV...
       run: bash ./deploy.sh DEV $DB_USER_DEV $DB_PASS_DEV $API_KEY_DEV
@@ -73,7 +73,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-artifact
-          path: ./build/
+          path: ./hackaton/
 
       - name: Desplegando aplicación en PROD...
         run: bash ./deploy.sh PROD $DB_USER_DEV $DB_PASS_DEV $API_KEY_DEV
