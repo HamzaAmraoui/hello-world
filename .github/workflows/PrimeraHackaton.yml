@@ -1,0 +1,83 @@
+name: "Bad Pipeline"
+on:  
+  push:
+    branches:
+       - main
+  workflow_dispatch:
+
+jobs:  
+  build:    
+    runs-on: ubuntu-latest
+    env: 
+      DB_USER_DEV: ${{ secrets.USERNAME }}
+      DB_PASS_DEV: ${{ secrets.PASSWORD }}
+      API_KEY_DEV: ${{ secrets.APIKEY }}    
+    steps:
+      - name: Checkout código        
+        uses: actions/checkout@v3
+
+      - name: Instalando hackaton cli y dependencias      
+        run: | 
+          sudo apt update          
+          sudo apt install -y hackaton          
+          hackaton install  
+
+      - name: "Aplicando configuraciones necesarias"
+        run: |  
+          sudo apt-get update -y && sudo apt-get install -y nginx curl
+          sudo ufw allow 'Nginx Full' && sudo ufw enable
+          sudo systemctl disable apache2
+          sudo rm -rf /var/www/html/*
+          sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/backup
+          sudo sed -i 's/root \/var\/www\/html;/root \/var\/www\/app;/' /etc/nginx/sites-available/default
+          sudo chmod -R 755 /var/www/app
+          sudo chown -R www-data:www-data /var/www/app
+          sudo systemctl restart nginx
+
+      - name: Construir aplicacion
+        run: hackaton run build
+
+      - name: "Probando aplicación"
+        run:  hackaton test
+      - name: Guardar artefacto 
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: ./build
+
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: build
+    env: 
+      DB_USER_DEV: ${{ secrets.USERNAME }}
+      DB_PASS_DEV: ${{ secrets.PASSWORD }}
+      API_KEY_DEV: ${{ secrets.APIKEY }}  
+    steps:  
+    - name: Guardar artefacto 
+      uses: actions/download-artifact@v3
+      with:
+            name: build-artifact
+            path: ./build
+        
+    
+    - name: Desplegando aplicación en DEV...
+      run: bash ./deploy.sh DEV
+      
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: deploy-dev
+    environment: production
+    steps:
+      - name: Guardar artefacto 
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifact
+          path: ./build
+
+      - name: Desplegando aplicación en PROD...
+        run: bash ./deploy.sh PROD
+
+      - name: Terminando proceso
+        run:  echo "🚀 Despliegue completado en desarrollo y producción" 
