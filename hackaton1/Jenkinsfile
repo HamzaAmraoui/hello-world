@@ -1,0 +1,61 @@
+pipeline {
+    agent none  // Usamos agentes efímeros
+
+    stages {
+        stage('Build') {
+            agent { kubernetes { yaml podYAML() } }
+            steps {
+                echo " Building the application..."
+            }
+        }
+        
+        stage('Test') {
+            agent { kubernetes { yaml podYAML() } }
+            steps {
+                echo " Running tests..."
+            }
+        }
+
+        stage('Docker Build & Push') {
+            agent { kubernetes { yaml podYAML() } }
+            environment {
+                DOCKER_REGISTRY = "docker.io"
+                IMAGE_NAME = "khalifi11/hello-k8s"
+                IMAGE_TAG = "latest"
+            }
+            steps {
+                echo " Building and pushing Docker image..."
+                sh '''
+                    docker build -t $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG .
+                    docker push $DOCKER_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Deploy to K8s') {
+            agent { kubernetes { yaml podYAML() } }
+            steps {
+                echo "🚀 Deploying application to Kubernetes..."
+                sh '''
+                    kubectl apply -f https://raw.githubusercontent.com/cloudogu/hello-k8s/main/k8s.yaml
+                    kubectl rollout status deployment/hello-k8s
+                '''
+            }
+        }
+    }
+}
+
+
+def podYAML() {
+    return """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+    - name: kubectl
+      image: bitnami/kubectl
+      command:
+        - cat
+      tty: true
+"""
+}
