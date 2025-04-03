@@ -40,7 +40,7 @@ jobs:
       - name: "Probando aplicación"
         run:  hackaton test
       - name: Guardar artefacto 
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifact
           path: ./hackaton/
@@ -55,7 +55,7 @@ jobs:
       API_KEY_DEV: ${{ secrets.APIKEY }}  
     steps:  
     - name: Guardar artefacto 
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
             name: build-artifact
             path: ./hackaton/
@@ -70,7 +70,7 @@ jobs:
     environment: production
     steps:
       - name: Guardar artefacto 
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-artifact
           path: ./hackaton/
