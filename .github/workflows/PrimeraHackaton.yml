@@ -29,6 +29,7 @@ jobs:
           sudo systemctl disable apache2
           sudo rm -rf /var/www/html/*
           sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/backup
+          mkdir -p /var/www/app
           sudo sed -i 's/root \/var\/www\/html;/root \/var\/www\/app;/' /etc/nginx/sites-available/default
           sudo chmod -R 755 /var/www/app
           sudo chown -R www-data:www-data /var/www/app
@@ -61,8 +62,7 @@ jobs:
             path: ./hackaton/
         
     - name: Desplegando aplicación en DEV...
-      run: bash ./deploy.sh DEV $DB_USER_DEV $DB_PASS_DEV $API_KEY_DEV
-      
+      run: bash ./deploy.sh DEV 
 
   deploy-prod:
     runs-on: ubuntu-latest
@@ -76,7 +76,7 @@ jobs:
           path: ./hackaton/
 
       - name: Desplegando aplicación en PROD...
-        run: bash ./deploy.sh PROD $DB_USER_DEV $DB_PASS_DEV $API_KEY_DEV
-
+        run: bash ./deploy.sh PROD 
+        
       - name: Terminando proceso
         run:  echo "🚀 Despliegue completado en desarrollo y producción" 

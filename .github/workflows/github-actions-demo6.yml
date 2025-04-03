@@ -1,0 +1,23 @@
+name: "GitHub API Workflow"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  call_api:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.MY_TOKEN}}  
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Hacer solicitud a la API de GitHub
+        run: |
+          curl -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/${{ github.repository }}
