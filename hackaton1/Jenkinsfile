@@ -57,5 +57,12 @@ spec:
       command:
         - cat
       tty: true
+    - name: docker
+      image: docker:20.10-dind  # Imagen con Docker
+      securityContext:
+        privileged: true  # Necesario para Docker dentro de Kubernetes
+      command:
+        - "dockerd"
+      tty: true
 """
 }
