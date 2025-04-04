@@ -35,7 +35,7 @@ jobs:
           sudo apt-get update -y && sudo apt-get install -y nginx curl
           sudo ufw allow 'Nginx Full' && sudo ufw enable
           sudo cp /etc/nginx/sites-available/default /etc/nginx/sites-available/backup
-          mkdir -p /var/www/app
+          sudo mkdir -p /var/www/app
           sudo sed -i 's/root \/var\/www\/html;/root \/var\/www\/app;/' /etc/nginx/sites-available/default
           sudo chmod -R 755 /var/www/app
           sudo chown -R www-data:www-data /var/www/app
