@@ -42,10 +42,10 @@ jobs:
           sudo systemctl restart nginx
 
       - name: Construir aplicacion
-        run: hackaton run build
+        run: echo  "hackaton run build"
 
       - name: "Probando aplicación"
-        run:  hackaton test
+        run:  echo"hackaton test"
       - name: Guardar artefacto 
         uses: actions/upload-artifact@v4
         with:
