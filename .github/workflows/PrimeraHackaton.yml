@@ -18,9 +18,9 @@ jobs:
 
       - name: Instalando hackaton cli y dependencias      
         run: | 
-          sudo apt update          
-          sudo apt install -y hackaton          
-          hackaton install  
+          echo "sudo apt update"          
+          echo "sudo apt install -y hackaton"          
+          echo "hackaton install"  
 
       - name: "Aplicando configuraciones necesarias"
         run: |  
