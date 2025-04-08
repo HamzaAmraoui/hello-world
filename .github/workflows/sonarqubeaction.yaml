@@ -49,10 +49,8 @@ jobs:
       - name: "Ejecutando análisis de SonarQube"
         uses: SonarSource/sonarcloud-github-action@v2
         env:
-          sonar-token: ${{ secrets.SONAR_TOKEN }}
-          # Si usas SonarQube local, reemplaza esta URL con la correcta
-          sonar-host-url: 'http://localhost:9000/sonarqube'  # Para SonarCloud, o coloca la URL de tu servidor SonarQube
-
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}       
+          SONAR_HOST_URL: 'http://localhost:9000/sonarqube'
       - name: "Probando aplicación"
         run:  echo "hackaton test"
 
