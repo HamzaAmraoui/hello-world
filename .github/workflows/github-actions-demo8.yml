@@ -11,13 +11,11 @@ jobs:
         steps:
             - name: Clonado repositorio
               uses: actions/checkout@v2
-            - name: Configurar docker
-              run: |
-                sudo apt-get update
-                sudo apt-get install -y docker.io
-                sudo systemctl enable --now docker
-                sudo apt-get remove --purge containerd
-                sudo apt-get install containerd.io
+              
+            - name: Configurar Docker Buildx
+              uses: docker/setup-buildx-action@v2
+              with:
+                version: latest
 
 
             - name: Crear docker imagen
