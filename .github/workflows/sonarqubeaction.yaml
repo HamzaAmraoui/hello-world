@@ -49,7 +49,7 @@ jobs:
       - name: "Ejecutando análisis de SonarQube"
         uses: SonarSource/sonarcloud-github-action@v2
         env:
-          SONAR_TOKEN: 6ea173ec50a544139829c8a303ac1874e88170a4      
+          SONAR_TOKEN: 3b826c6cf29ff2d8e882599439413cb862dc6db2    
 
       - name: "Probando aplicación"
         run:  echo "hackaton test"
