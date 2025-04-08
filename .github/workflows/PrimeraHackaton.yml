@@ -45,7 +45,7 @@ jobs:
         run: echo  "hackaton run build"
 
       - name: "Probando aplicación"
-        run:  echo"hackaton test"
+        run:  echo "hackaton test"
       - name: Guardar artefacto 
         uses: actions/upload-artifact@v4
         with:
