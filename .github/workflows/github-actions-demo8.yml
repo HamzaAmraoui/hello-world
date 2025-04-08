@@ -1,0 +1,44 @@
+name: CI/CD Pipeline
+run-name: "Esta siendo ejecutado por ${{github.actor}}"
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+    ci:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Clonado repositorio
+              uses: actions/checkout@v2
+            - name: Configurar docker
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y docker.io
+                sudo systemctl enable --now docker
+            - name: Crear docker imagen
+              run: |
+                docker run --rm my-nodejs-app:latest npm test
+            - name: Run SonarQube Scanner
+              uses: SonarSource/sonarcloud-github-action@v2
+              env:
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+    cd: 
+        runs-on: ubuntu-latest
+        needs: ci
+        env: 
+                DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+                DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        steps:
+            - name: Subir la imagen a docker
+              run: |
+                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                docker tag my-nodejs-app:latest myregistry.com/my-nodejs-app:latest
+                docker push myregistry.com/my-nodejs-app:latest
+            - name: Deploy to Production (Docker Compose)
+              run: |
+                  ssh -o StrictHostKeyChecking=no user@production-server "
+                    cd /path/to/docker-compose-directory &&
+                    docker-compose pull &&
+                    docker-compose up -d"
+              
