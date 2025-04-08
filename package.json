@@ -4,7 +4,7 @@
   "description": "Un proyecto básico de Node.js",
   "main": "index.js",
   "scripts": {
-   "test": "echo \"No tests defined yet\""
+    "test": "echo \"No tests defined yet\"",
     "start": "node index.js"
   },
   "author": "",
