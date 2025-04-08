@@ -16,8 +16,9 @@ jobs:
               uses: docker/setup-buildx-action@v2
               with:
                 version: latest
-
-
+            - name: Construir imagen
+              run: |
+                docker build -t my-nodejs-app:latest .
             - name: Crear docker imagen
               run: |
                 sudo docker run --rm my-nodejs-app:latest npm test
