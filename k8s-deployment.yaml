@@ -1,3 +1,40 @@
+# ServiceAccount para Jenkins
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins-service-account
+  namespace: default
+---
+# Role que le da permisos a Jenkins sobre los recursos de Kubernetes (deployments y services)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: jenkins-role
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["create", "get", "list", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["services"]
+    verbs: ["create", "get", "list", "update", "patch", "delete"]
+---
+# RoleBinding que vincula el ServiceAccount con el Role creado
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-role-binding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: jenkins-service-account
+    namespace: default
+roleRef:
+  kind: Role
+  name: jenkins-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Deployment de tu aplicación
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,7 +54,9 @@ spec:
           image: docker.io/my-app
           ports:
             - containerPort: 80
+      serviceAccountName: jenkins-service-account  # Añadido el ServiceAccount
 ---
+# Service para exponer tu aplicación
 apiVersion: v1
 kind: Service
 metadata:
