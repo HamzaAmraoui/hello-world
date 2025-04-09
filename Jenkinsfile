@@ -12,9 +12,10 @@ pipeline {
             steps {
                 echo "Logging in to Docker Hub"
                 script {
-                    // Eliminar el comentario mal colocado
                     docker.withCredentials([usernamePassword(credentialsId: 'Cuenta_DokcerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh "echo $DOCKER_PASS | docker login --username $DOCKER_USER --password-stdin"
+                        echo "DOCKER_USER: $DOCKER_USER"
+                   
+                        sh "docker login --username $DOCKER_USER --password-stdin <<< $DOCKER_PASS"
                     }
                 }
             }
