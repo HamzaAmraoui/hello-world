@@ -14,11 +14,6 @@ pipeline {
                 echo "Installing kubectl and Helm"
                 script {
                     sh '''
-                        # Install kubectl
-                        curl -LO "https://dl.k8s.io/release/v1.24.6/bin/linux/amd64/kubectl"
-                        chmod +x kubectl
-                        mv kubectl /usr/local/bin/kubectl
-
                         # Install Helm
                         curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
                     '''
