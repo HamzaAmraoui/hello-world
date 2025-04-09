@@ -1,11 +1,11 @@
-
+# ServiceAccount para Jenkins
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: jenkins-service-account
   namespace: default
 ---
-
+# Role para Jenkins que le da permisos sobre los recursos de Kubernetes necesarios
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -19,7 +19,7 @@ rules:
     resources: ["services"]
     verbs: ["create", "get", "list", "update", "patch", "delete"]
 ---
-
+# RoleBinding para asignar el Role a Jenkins ServiceAccount
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
@@ -34,7 +34,92 @@ roleRef:
   name: jenkins-role
   apiGroup: rbac.authorization.k8s.io
 ---
-
+# Deployment de Jenkins (debe tener permisos sobre los recursos del cluster)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ci-jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ci-jenkins
+  template:
+    metadata:
+      labels:
+        app: ci-jenkins
+    spec:
+      serviceAccountName: jenkins-service-account  # Especificamos el ServiceAccount aquí
+      containers:
+        - name: jenkins
+          image: docker.io/jenkins/jenkins:lts
+          resources:
+            requests:
+              cpu: "0.5"
+              memory: "1024Mi"
+            limits:
+              cpu: "1"
+              memory: "2048Mi"
+          env:
+            - name: JENKINS_OPTS
+              value: "--httpPort=9090 --prefix=/ci-jenkins"
+          securityContext:
+            runAsUser: 0
+            privileged: true
+          volumeMounts:
+            - name: ci-jenkins-home
+              mountPath: /var/jenkins_home
+            - name: docker-socket
+              mountPath: /var/run/docker.sock
+              readOnly: true
+      volumes:
+        - name: ci-jenkins-home
+          persistentVolumeClaim:
+            claimName: ci-jenkins-home-pvc
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+            type: Socket
+---
+# Service para Jenkins
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-new-jenkins-service
+spec:
+  selector:
+    app: ci-jenkins
+  ports:
+    - name: web
+      port: 9090
+      targetPort: 9090
+    - name: remoting
+      port: 50000
+      targetPort: 50000
+---
+# Ingress para Jenkins
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ci-jenkins
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/preserve-host: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: traefik-forward-auth@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - http:
+      paths:
+      - path: /ci-jenkins
+        pathType: Prefix
+        backend:
+          service:
+            name: my-new-jenkins-service
+            port:
+              number: 9090
+---
+# Deployment de la aplicación (my-app)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -54,9 +139,9 @@ spec:
           image: docker.io/my-app
           ports:
             - containerPort: 80
-      serviceAccountName: jenkins-service-account  
+      serviceAccountName: jenkins-service-account  # Especificamos el ServiceAccount aquí también
 ---
-
+# Service para la aplicación (my-app-service)
 apiVersion: v1
 kind: Service
 metadata:
