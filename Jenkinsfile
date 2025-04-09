@@ -8,12 +8,24 @@ pipeline {
     }
 
     stages {
+        stage("Install kubectl") {
+            steps {
+                echo "Installing kubectl"
+                script {
+                    sh '''
+                        curl -LO "https://dl.k8s.io/release/v1.24.6/bin/linux/amd64/kubectl"
+                        chmod +x kubectl
+                        mv kubectl /usr/local/bin/kubectl
+                    '''
+                }
+            }
+        }
+
         stage("Login to Docker Hub") {
             steps {
                 echo "Logging in to Docker Hub"
                 script {
-                    
-                   withCredentials([usernamePassword(credentialsId: 'Cuenta_DokcerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    withCredentials([usernamePassword(credentialsId: 'Cuenta_DockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh "echo $DOCKER_PASS | docker login --username $DOCKER_USER --password-stdin"
                     }
                 }
