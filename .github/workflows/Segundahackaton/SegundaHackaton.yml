@@ -1,0 +1,89 @@
+name: "CI and CD"
+
+on:  
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      entornos:
+        description: "¿En qué entorno lo quieres desplegar?"
+        required: true
+        default: desarrollo
+        type: choice
+        options:
+          - production
+          - desarrollo
+
+jobs:  
+  CI:    
+    runs-on: ubuntu-latest    
+    steps:
+      - name: Checkout código        
+        uses: actions/checkout@v4
+
+      - name: Install Hackaton Configure   
+        uses: ./Configure-Hackaton/
+
+      - name: Static code analysis        
+        uses: ./.github/actions/sonnarqube_analisis
+
+      - name: Build Infra
+        run: |
+          echo " Aqui iria a la carpeta donde montaria tu yaml ./Infra/Frotend/ "
+
+      - name: Unit tests
+        run: |
+          echo "Testeando aplicación..."
+          # Random but useful code
+
+      - name: More tests
+        run: |
+          echo "Testeando aplicación más..."
+          # Random but useful code
+
+      - name: Upload Artifact
+        run: |
+          echo "Subiendo artefacto..."
+          # Random but useful code
+
+  deploy-dev:
+    runs-on: ubuntu-latest
+    needs: CI
+    if: ${{ github.event.inputs.entornos == 'desarrollo' }}
+    environment: desarrollo
+    env:
+      DB_USER_DEV: ${{ secrets.DB_USER}}
+    steps:
+      - name: Deploy to Dev Environment
+        run: |
+          echo "Desplegando en desarrollo..."
+          # Random but useful code
+
+      - name: Test Autonomous
+        run: |
+          echo "Test autónomo post-deploy"
+          # Random but useful code
+      
+      - name: Promote artifact
+        run: |
+          echo "Promoviendo artefacto..."
+          # Random but useful code
+
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: CI
+    if: ${{ github.event.inputs.entornos == 'production' }}
+    environment: production
+    env:
+      DB_USER_PROD: ${{ secrets.DB_USER}}
+    steps:
+      - name: Deploy to Prod Environment
+        run: |
+          echo "Desplegando en producción..."
+          # Random but useful code
+
+      - name: Promote artifact
+        run: |
+          echo "Promoviendo artefacto..."
+          # Random but useful code

@@ -1,0 +1,22 @@
+name: "Install hackaton cli"
+runs:
+  using: "composite"
+  steps:
+  - name: Install hackaton cli
+    run: |
+        /*
+        * 
+        * 
+        Ramdom but usefull code
+        *
+        *
+        */  
+  - name: Configure Network
+    run: |
+        /*
+        * 
+        * 
+        Ramdom but usefull code
+        *
+        *
+        */  
