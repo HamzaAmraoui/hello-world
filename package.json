@@ -1,14 +1,12 @@
 {
-  "name": "hello-world",
+  "name": "devops-local-app",
   "version": "1.0.0",
-  "description": "Un proyecto básico de Node.js",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"No tests defined yet\"",
-    "start": "node index.js"
+    "start": "node app.js",
+    "test": "echo \"No tests aún...\""
   },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "express": "^4.18.0"
+  }
 }
