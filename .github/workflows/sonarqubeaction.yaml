@@ -1,4 +1,4 @@
-name: "Bad Pipeline"
+name: "Pipeline Example"
 
 on:  
   push:
@@ -21,7 +21,8 @@ jobs:
     env: 
       DB_USER_DEV: ${{ secrets.USERNAME }}
       DB_PASS_DEV: ${{ secrets.PASSWORD }}
-      API_KEY_DEV: ${{ secrets.APIKEY }}    
+      API_KEY_DEV: ${{ secrets.APIKEY }}
+
     steps:
       - name: Checkout código        
         uses: actions/checkout@v3
@@ -49,7 +50,7 @@ jobs:
       - name: "Ejecutando análisis de SonarQube"
         uses: SonarSource/sonarcloud-github-action@v2
         env:
-          SONAR_TOKEN: 3b826c6cf29ff2d8e882599439413cb862dc6db2    
+          SONAR_TOKEN: ${{ secrets.MY_TOKEN}}
 
       - name: "Probando aplicación"
         run:  echo "hackaton test"

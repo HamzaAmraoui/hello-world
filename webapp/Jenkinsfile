@@ -1,0 +1,26 @@
+@Library('jenkins-shared-library') _
+
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "miweb:${generarTag(env.BRANCH_NAME, env.GIT_COMMIT)}"
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    echo "Construyendo imagen: ${env.DOCKER_IMAGE}"
+                    sh "docker build -t ${env.DOCKER_IMAGE} ."
+                }
+            }
+        }
+
+        stage('Mensaje') {
+            steps {
+                imprimirMensaje("Despliegue listo para imagen ${env.DOCKER_IMAGE}")
+            }
+        }
+    }
+}
