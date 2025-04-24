@@ -13,7 +13,7 @@ pipeline {
         stage('Preparar Variables') {
             steps {
                 script {
-
+                   
                     env.DOCKER_IMAGE = "miweb:${generarTag(env.BRANCH_NAME, env.GIT_COMMIT)}"
                 }
             }
@@ -22,17 +22,29 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-
-                    echo "Construyendo imagen: ${env.DOCKER_IMAGE}"
                    
+                    echo "Construyendo imagen: ${env.DOCKER_IMAGE}"
                     sh "docker build -t ${env.DOCKER_IMAGE} -f webapp/Dockerfile ."
+                   
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+               
+                    echo "Desplegando en Kubernetes la imagen: ${env.DOCKER_IMAGE}"
+                    
+                    
+                    sh "kubectl apply -f kubernetes/deployment.yaml" 
+                   
                 }
             }
         }
 
         stage('Mensaje') {
             steps {
-                
                 imprimirMensaje("Despliegue listo para imagen ${env.DOCKER_IMAGE}")
             }
         }
