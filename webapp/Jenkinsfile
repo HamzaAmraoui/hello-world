@@ -4,10 +4,17 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "miweb:${generarTag(env.BRANCH_NAME, env.GIT_COMMIT)}"
-    }
+        DOCKER_IMAGE = ''  
 
     stages {
+        stage('Preparar Variables') {
+            steps {
+                script {
+                    env.DOCKER_IMAGE = "miweb:${generarTag(env.BRANCH_NAME, env.GIT_COMMIT)}"
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
@@ -22,5 +29,6 @@ pipeline {
                 imprimirMensaje("Despliegue listo para imagen ${env.DOCKER_IMAGE}")
             }
         }
+    }
     }
 }
