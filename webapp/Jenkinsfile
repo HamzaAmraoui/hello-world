@@ -3,9 +3,6 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKER_IMAGE = ''  
-
     stages {
         stage('Preparar Variables') {
             steps {
@@ -29,6 +26,5 @@ pipeline {
                 imprimirMensaje("Despliegue listo para imagen ${env.DOCKER_IMAGE}")
             }
         }
-    }
     }
 }
