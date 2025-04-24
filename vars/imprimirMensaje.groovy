@@ -1,4 +1,4 @@
 def call(String){
-echo "Mensage: $(mensaje)"
+echo "Mensage: ${mensaje}"
 
 }
