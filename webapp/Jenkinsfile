@@ -4,9 +4,16 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Preparar Variables') {
             steps {
                 script {
+
                     env.DOCKER_IMAGE = "miweb:${generarTag(env.BRANCH_NAME, env.GIT_COMMIT)}"
                 }
             }
@@ -15,14 +22,17 @@ pipeline {
         stage('Build') {
             steps {
                 script {
+
                     echo "Construyendo imagen: ${env.DOCKER_IMAGE}"
-                    sh "docker build -t ${env.DOCKER_IMAGE} webapp/Dockerfile "
+                   
+                    sh "docker build -t ${env.DOCKER_IMAGE} -f webapp/Dockerfile ."
                 }
             }
         }
 
         stage('Mensaje') {
             steps {
+                
                 imprimirMensaje("Despliegue listo para imagen ${env.DOCKER_IMAGE}")
             }
         }
